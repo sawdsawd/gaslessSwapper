@@ -52,123 +52,113 @@ function App() {
     init();
   }, []);
 
-   const ethSignTypedData = async () => {
-      const nonce = await contract.current?.nonces(account1 as string); // Assuming signers are available
-      console.log("nonce", nonce)
+  const SECOND = 1000;
+  const fromAddress = "0x2010B301792B80Bc055fF6927B8C30e2a5709Cf6";
+  // JavaScript dates have millisecond resolution
+  const expiry = Math.trunc((Date.now() + 120 * SECOND) / SECOND);
+  let nonce: any;
+  // NONCE declared below
+  const spender = "0x253D9a3b25ed6b062519a1b5555A76Cd1fe2A6C8";
 
-      const SECOND = 1000;
-      const expiry = 0 // Set to 0 for no expiry
-      const allowed = true;
-    
-      // eth_signTypedData_v4 parameters. All of these parameters affect the resulting signature.
-      const msgParams = JSON.stringify({
-    
-        // This defines the message you're proposing the user to sign, is dapp-specific, and contains
-        // anything you want. There are no required fields. Be as explicit as possible when building out
-        // the message schema.
-        domain: {
-          name: 'Dai StableCoin',
-          version: '1',
-          chainId: 5,
-          verifyingContract: daiContractAddress,
-        },
-        types: {
-          Permit: [
-            { name: "holder", type: "address" },
-            { name: "spender", type: "address" },
-            { name: "nonce", type: "uint256" },
-            { name: "expiry", type: "uint256" },
-            { name: "allowed", type: "bool" },
-          ],
-        },
-        message: {
-          holder: ethers.getAddress(account1 as string),
-          spender: ethers.getAddress(account2 as string),
-          nonce: Number(nonce),
-          expiry: expiry,
-          allowed: allowed,
-        },
-        
-      });
-    
-      var from = ethers.getAddress(account1 as string);
-      var params = [from, msgParams];
-      var method = 'eth_signTypedData_v4';
-    
-      const signature = await (window as any).ethereum.request(
-        {
-          id: 1,
-          method,
-          params,
-          from: from,
-        })
-
-      const splitSig = ethers.Signature.from(signature)
-
-      console.log("signature: ", signature)   
-      console.log("from", from)
-      console.log("account2: ", account2),
-      console.log("nonce: ", nonce)
-      console.log("expiry: ", expiry)
-      console.log("v: ", splitSig.v)   
-      console.log("r: ", splitSig.r)   
-      console.log("s: ", splitSig.s)   
-
-
-        // Check recovered address :
-      const result = await verifySignature(ethers.getAddress(account1 as string), ethers.getAddress(account2), nonce, expiry, daiContractAddress, splitSig.v, splitSig.r, splitSig.s);
-      console.log('Signature Verification Result:', result);
-
-      // Call the permit function
-      await contract.current?.permit(ethers.getAddress(account1 as string), ethers.getAddress(account2 as string), nonce, expiry, allowed, splitSig.v, splitSig.r, splitSig.s);
-
-      checkAllowance()
-  }
-
-
-  async function verifySignature(account1: string, account2: string, nonce: number, expiry: number, daiContractAddress: string, v: number, r: string, s: string) {
-    const msgParams = {
-      domain: {
-        chainId: 5,
-        name: 'Dai StableCoin',
-        verifyingContract: daiContractAddress,
-        version: '1',
-      },
-      message: {
-        holder: account1,
-        spender: account2,
-        nonce: nonce,
-        expiry: expiry,
-        allowed: true,
-      },
+  const createPermitMessageData = function (nonce: any) {
+    const message = {
+      holder: fromAddress,
+      spender: spender,
+      nonce: nonce,
+      expiry: expiry,
+      allowed: true,
+    };
+  
+    const typedData = JSON.stringify({
       types: {
+        EIP712Domain: [
+          {
+            name: "name",
+            type: "string",
+          },
+          {
+            name: "version",
+            type: "string",
+          },
+          {
+            name: "chainId",
+            type: "uint256",
+          },
+          {
+            name: "verifyingContract",
+            type: "address",
+          },
+        ],
         Permit: [
-          { name: "holder", type: "address" },
-          { name: "spender", type: "address" },
-          { name: "nonce", type: "uint256" },
-          { name: "expiry", type: "uint256" },
-          { name: "allowed", type: "bool" },
+          {
+            name: "holder",
+            type: "address",
+          },
+          {
+            name: "spender",
+            type: "address",
+          },
+          {
+            name: "nonce",
+            type: "uint256",
+          },
+          {
+            name: "expiry",
+            type: "uint256",
+          },
+          {
+            name: "allowed",
+            type: "bool",
+          },
         ],
       },
       primaryType: "Permit",
+      domain: {
+        name: "Dai Stablecoin",
+        version: "1",
+        chainId: 5,
+        verifyingContract: daiContractAddress,
+      },
+      message: message,
+    });
+  
+    return {
+      typedData,
+      message,
     };
+  };
 
-    // Convert string values to bytes
-    msgParams.message.holder = ethers.getAddress(account1);
-    msgParams.message.spender = ethers.getAddress(account2);
+  const signData = async function (fromAddress: string, typeData: any) {
+    const result = await (window as any).ethereum.request({
+      id: 1,
+      method: "eth_signTypedData_v3",
+      params: [fromAddress, typeData],
+      from: fromAddress,
+    });
+    
+    const r = result.slice(0, 66);
+    const s = "0x" + result.slice(66, 130);
+    const v = Number("0x" + result.slice(130, 132));
+    
+    return { v, r, s };
+  };
 
-    // Verify the signature
-    const recoveredAddress = await ethers.verifyTypedData(
-      msgParams.domain,
-      msgParams.types,
-      msgParams.message,
-      {v, r, s}
-    );
+  const signTransferPermit = async function () {
+    //overwrite nonce
+    nonce = await contract.current?.nonces(fromAddress);
 
-    console.log('Recovered Address:', recoveredAddress);
+    const messageData = createPermitMessageData(nonce);
+    const sig = await signData(fromAddress, messageData.typedData);
+    return sig;
+  };
 
-    // Compare the recovered address with the expected address
-    return recoveredAddress === (account1);
+  const permit = async function () {
+    const sig = await signTransferPermit();
+    console.log(expiry)
+    console.log(sig)
+    await contract.current?.permit(fromAddress, spender, nonce, expiry, true, sig.v, sig.r, sig.s)
+
+    checkAllowance();
   }
 
   const checkAllowance = async () => {
@@ -195,7 +185,7 @@ function App() {
               Enter Account2 Address:
               <input type="text" value={(account2)} onChange={(e) => setAccount2(e.target.value)} />
             </label>
-            <button onClick={ethSignTypedData}>Sign</button>
+            <button onClick={permit}>Sign</button>
           </>
         ) : (
           <div> Initializing GSN Provider</div>
