@@ -6,9 +6,11 @@ import './App.css';
 import { BrowserProvider, Contract, ethers } from 'ethers';
 import { RelayProvider } from '@opengsn/provider';
 import daiAbi from './assets/DaiABI.json';
+import swapperAbi from './assets/GaslessSwapperGoerliABI.json';
 
 const daiContractAddress = '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844'; // Replace with the actual address of the Dai contract
 const acceptEverythingPaymasterGoerli = '0x7e4123407707516bD7a3aFa4E3ebCeacfcbBb107';
+const swapperContractAddress = "0x41ce61E9b34A2145DC33B4d659254DfCb00FaD3D";
 
 async function connect() {
   const ethereum = (window as any).ethereum;
@@ -24,10 +26,12 @@ async function connect() {
 
 function App() {
   const [ready, setReady] = useState(false);
-  const [account1, setAccount1] = useState<string | null>(null);
-  const [account2, setAccount2] = useState<string>(''); // User input for account2
+  const [account1, setAccount1] = useState<string>('');
+  const [account2, setAccount2] = useState<string>('');
 
-  const contract = useRef<Contract | null>(null);
+  const daiContract = useRef<Contract | null>(null);
+  const swapperContract = useRef<Contract | null>(null);
+
 
   useEffect(() => {
     const init = async () => {
@@ -43,8 +47,12 @@ function App() {
           },
         });
 
+        const ethersProvider = new ethers.BrowserProvider((window as any).ethereum);
+        const signer = await ethersProvider.getSigner();
+
         console.log('RelayProvider init success');
-        contract.current = new ethers.Contract(daiContractAddress, JSON.stringify(daiAbi), gsnSigner);
+        daiContract.current = new ethers.Contract(daiContractAddress, JSON.stringify(daiAbi), gsnSigner);
+        swapperContract.current = new ethers.Contract(swapperContractAddress, JSON.stringify(swapperAbi), gsnSigner);
         setReady(true);
       }
     };
@@ -53,12 +61,18 @@ function App() {
   }, []);
 
   const SECOND = 1000;
-  const fromAddress = "0x2010B301792B80Bc055fF6927B8C30e2a5709Cf6";
   // JavaScript dates have millisecond resolution
   const expiry = Math.trunc((Date.now() + 120 * SECOND) / SECOND);
   let nonce: any;
   // NONCE declared below
-  const spender = "0x253D9a3b25ed6b062519a1b5555A76Cd1fe2A6C8";
+
+  let fromAddress: string;
+  let spender: string;
+
+  if (account1 && account2) {
+    fromAddress = ethers.getAddress(account1 as string);
+    spender = ethers.getAddress(account2 as string);
+  }
 
   const createPermitMessageData = function (nonce: any) {
     const message = {
@@ -145,7 +159,7 @@ function App() {
 
   const signTransferPermit = async function () {
     //overwrite nonce
-    nonce = await contract.current?.nonces(fromAddress);
+    nonce = await daiContract.current?.nonces(fromAddress);
 
     const messageData = createPermitMessageData(nonce);
     const sig = await signData(fromAddress, messageData.typedData);
@@ -156,13 +170,14 @@ function App() {
     const sig = await signTransferPermit();
     console.log(expiry)
     console.log(sig)
-    await contract.current?.permit(fromAddress, spender, nonce, expiry, true, sig.v, sig.r, sig.s)
-
+    await daiContract.current?.permit(fromAddress, spender, nonce, expiry, true, sig.v, sig.r, sig.s)
     checkAllowance();
+
+    
   }
 
   const checkAllowance = async () => {
-    console.log("allowance: ", await contract.current?.allowance(account1, account2))
+    console.log("allowance: ", await daiContract.current?.allowance(account1, account2))
   }
  
   return (
@@ -174,6 +189,8 @@ function App() {
       <h1>Gasless Permit</h1>
 
       <p>Account 2 : 0x253D9a3b25ed6b062519a1b5555A76Cd1fe2A6C8</p>
+      <br/>
+      <p>Swapper Goerli: 0x41ce61E9b34A2145DC33B4d659254DfCb00FaD3D</p>
 
       <h2>Sign typed data v4</h2>
       
