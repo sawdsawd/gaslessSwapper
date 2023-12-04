@@ -10,12 +10,14 @@ import { TokenPaymasterProvider } from '@opengsn/paymasters'
 import { Contract, Signer, ethers } from 'ethers';
 import { RelayProvider } from '@opengsn/provider';
 import daiAbi from './assets/DaiABI.json';
+import ctfAbi from './assets/CtfABI.json'
 import swapperAbi from './assets/GaslessSwapperGoerliABI.json';
 
 const daiContractAddress = '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844'; // Replace with the actual address of the Dai contract
 const acceptEverythingPaymasterGoerli = '0x7e4123407707516bD7a3aFa4E3ebCeacfcbBb107';
 const swapperContractAddress = "0x41ce61E9b34A2145DC33B4d659254DfCb00FaD3D";
 const permitERC20UniswapPaymaster = '0xc7709b37C63E116Cc973842aE902462580d76104';
+const ctfContractAddress = '0xD1cfA489F7eABf322C5EE1B3779ca6Be9Ce08a8e';
 
 async function connect() {
   const ethereum = (window as any).ethereum;
@@ -35,6 +37,8 @@ function App() {
   const [account2, setAccount2] = useState<string>('');
 
   const daiContract = useRef<Contract | null>(null);
+
+  const ctfContract = useRef<Contract | null>(null);
 
   useEffect(() => {
     const init = async () => {
@@ -57,38 +61,43 @@ function App() {
 
         // daiContract.current = new ethers.Contract(daiContractAddress, JSON.stringify(daiAbi), gsnSigner);
         // swapperContract.current = new ethers.Contract(swapperContractAddress, JSON.stringify(swapperAbi), gsnSigner);
-
-        const gsnConfig: Partial<GSNConfig> = {
-          loggerConfiguration: { logLevel: 'debug' },
-          paymasterAddress: PaymasterType.PermitERC20UniswapV3Paymaster
-        }
-    
-        const gsnProvider = TokenPaymasterProvider.newProvider({ 
-          provider: (window as any).ethereum, 
-          config: gsnConfig 
-        })    
-        await gsnProvider.init(daiContractAddress)
-        console.log('GSN Provider:', gsnProvider);
-
-        const provider2 = new ethers.providers.Web3Provider(gsnProvider)
-        console.log('Ethers Provider:', provider2);
-
-        console.log('DAI Balance of account1: ', await provider2.getBalance(account1))
-    
-        const signer = provider2.getSigner();
-        console.log('Signer:', signer);
-
-        daiContract.current = new ethers.Contract(daiContractAddress, daiAbi, signer);
-
-        setReady(true);
       }
+      
+      const gsnConfig: Partial<GSNConfig> = {
+        loggerConfiguration: { logLevel: 'debug' },
+        paymasterAddress: PaymasterType.PermitERC20UniswapV3Paymaster
+      }
+  
+      const gsnProvider = TokenPaymasterProvider.newProvider({ 
+        provider: (window as any).ethereum, 
+        config: gsnConfig 
+      })    
+      await gsnProvider.init(daiContractAddress)
+      console.log('GSN Provider:', gsnProvider);
+
+      const provider2 = new ethers.providers.Web3Provider(gsnProvider)
+      console.log('Ethers Provider:', provider2);
+
+      console.log('DAI Balance of account: ', await provider2.getBalance(account1))
+  
+      const signer = provider2.getSigner();
+      console.log('Signer:', signer);
+
+      // daiContract.current = new ethers.Contract(daiContractAddress, JSON.stringify(daiAbi), signer);
+
+      ctfContract.current = new ethers.Contract(ctfContractAddress, JSON.stringify(ctfAbi), signer);
+
+      setReady(true);
     };
 
     init();
   }, []);
 
   const send = async function () {
-    await daiContract.current?.transferFrom(account1, account2, ethers.utils.parseEther("20"))
+    // await daiContract.current?.transferFrom(account1, account2, ethers.utils.parseEther("20"))
+    // console.log("Current holder: " + await ctfContract.current?.currentHolder())
+    const tx = await ctfContract.current?.captureTheFlag();
+    await tx.wait()
   }
  
   return (
