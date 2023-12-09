@@ -1,0 +1,68 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.GSN:hover {
+  filter: drop-shadow(0 0 2em #61fba9aa);
+}
+.logo.ETH:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+.logo.DAI:hover {
+  filter: drop-shadow(0 0 2em #f6fb61aa);
+}
+
+.transfer_form {
+  background-color: #181818;
+  padding: 40px;
+  border-radius: 20px;
+}
+
+.transfer_form h2 {
+  font-size: 36px;
+  margin: 0 auto;
+}
+
+.transfer_form form {
+  display: flex;
+  flex-direction: column;
+}
+
+.transfer_form label {
+  font-size: 17px;
+  margin: 10px auto;
+}
+
+.transfer_form input {
+  padding: 10px 20px;
+}
+
+.transfer_form button {
+  background-color: yellow;
+  color: black;
+  margin-top: 30px;
+}
+
+.capture {
+  background-color: #181818;
+  padding: 40px;
+  border-radius: 20px;
+}
+
+.capture button {
+  background-color: yellow;
+  color: black;
+  margin-top: 10px;
+}
