@@ -13,7 +13,7 @@ import swapperABI from './assets/swapperABI.json'
 
 const daiContractAddress = '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844'; // Replace with the actual address of the Dai contract
 const ctfContractAddress = '0xD1cfA489F7eABf322C5EE1B3779ca6Be9Ce08a8e';
-const gaslessMiddlemanAddress = '0xdcc9858f6b4B96FdfE9725F51EFBB3879bd7b964'
+const gaslessMiddlemanAddress = '0x3Ace38D25a2588A54EDf20614Cd16E9208479343'
 
 async function connect() {
   const ethereum = (window as any).ethereum;
@@ -126,6 +126,10 @@ function App() {
     const r = result.slice(0, 66);
     const s = "0x" + result.slice(66, 130);
     const v = Number("0x" + result.slice(130, 132));
+
+    console.log("v: ", v);
+    console.log("r: ", r);
+    console.log("s: ", s)
     
     return { v, r, s };
   };
