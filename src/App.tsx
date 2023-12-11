@@ -5,15 +5,14 @@ import { GSNConfig } from '@opengsn/provider'
 import { PaymasterType, ether } from '@opengsn/common'
 import { TokenPaymasterProvider } from '@opengsn/paymasters'
 
-import { Contract, Signer, ethers } from 'ethers';
-import gaslessMiddlemanABI from './assets/gaslessMiddlemanABI.json';
+import { BigNumber, Contract, Signer, ethers } from 'ethers';
 import ctfAbi from './assets/CtfABI.json'
 import daiAbi from './assets/DaiABI.json'
 import swapperABI from './assets/swapperABI.json'
 
 const daiContractAddress = '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844'; // Replace with the actual address of the Dai contract
 const ctfContractAddress = '0xD1cfA489F7eABf322C5EE1B3779ca6Be9Ce08a8e';
-const gaslessMiddlemanAddress = '0x3Ace38D25a2588A54EDf20614Cd16E9208479343'
+const gaslessMiddlemanAddress = '0xeA3406bb7D2EC5A8b05A3700CF77178f95738037';
 
 async function connect() {
   const ethereum = (window as any).ethereum;
@@ -36,6 +35,7 @@ function App() {
 
   const daiContract = useRef<Contract | null>(null);
   const ctfContract = useRef<Contract | null>(null);
+  const wethContract = useRef<Contract | null>(null);
   const gaslessMiddleman = useRef<Contract | null>(null);
 
   const SECOND = 1000;
