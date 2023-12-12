@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import './App.scss';
 
 import { GSNConfig } from '@opengsn/provider'
-import { PaymasterType, ether } from '@opengsn/common'
+import { PaymasterType } from '@opengsn/common'
 import { TokenPaymasterProvider } from '@opengsn/paymasters'
 
-import { BigNumber, Contract, Signer, ethers } from 'ethers';
+import { Contract, ethers } from 'ethers';
 import ctfAbi from './assets/CtfABI.json'
 import daiAbi from './assets/DaiABI.json'
 import swapperABI from './assets/swapperABI.json'
