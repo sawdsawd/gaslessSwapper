@@ -33,6 +33,8 @@ function App() {
   const [ethAmountOut, setEthAmountOut] = useState<string>()
   const [daiAmountInMaximum, setDaiAmountInMaximum] = useState<string>()
   const [selectedAction, setSelectedAction] = useState<string>('swap'); // Default to swap
+  const [txHash, setTxHash] = useState<string>()
+
 
   const handleActionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedAction(event.target.value);
@@ -42,7 +44,6 @@ function App() {
 
   const daiContract = useRef<Contract | null>(null);
   const ctfContract = useRef<Contract | null>(null);
-  const wethContract = useRef<Contract | null>(null);
   const gaslessMiddleman = useRef<Contract | null>(null);
 
   const SECOND = 1000;
@@ -203,12 +204,14 @@ function App() {
     const parsedDaiAmount = daiAmountInMaximum ? (daiAmountInMaximum.toString()) : (0).toString();
 
     const tx = await gaslessMiddleman.current?.exactOutputSwapDAIforETH(fromAddress, spender, nonce, expiry, true, sig.v, sig.r, sig.s, ethers.utils.parseEther(parsedEthAmount), ethers.utils.parseEther(parsedDaiAmount));
+    setTxHash(tx.hash)
     await tx.wait();
     console.log(tx)
   }
 
   const capture = async function () {
     const tx = await ctfContract.current?.captureTheFlag();
+    setTxHash(tx.hash)
     await tx.wait()
   }
 
@@ -284,6 +287,7 @@ function App() {
       {account1 && <h4>Connected account: <a href={`https://etherscan.io/address/${account1}`} target='_blank' rel='noopener noreferrer'>{account1}</a></h4>}
 
       <h4>Open your browser console too see all logs!</h4>
+      {txHash && <h4>Complete transaction hash: {txHash}</h4>}
 
       <h5>Goerli DAI Contract Address: <a href={`https://goerli.etherscan.io/address/${daiContractAddress}`} target='_blank' rel='noopener noreferrer'>{daiContractAddress}</a></h5>
       <h5>Swapper Middleman Contract Address: <a href={`https://goerli.etherscan.io/address/${gaslessMiddlemanAddress}`} target='_blank' rel='noopener noreferrer'>{gaslessMiddlemanAddress}</a></h5>

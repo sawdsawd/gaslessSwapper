@@ -3,6 +3,9 @@ This project enables you to transfer or convert your DAI tokens without having a
 Leveraging the Gas Station Network (GSN), this solution enables gasless transactions by relying on relayers, who are compensated directly with DAI. The core of this functionality is encapsulated in the *PermitERC20UniswapPaymaster* contract, allowing relayers to collect DAI, swap it for ETH on Uniswap, and cover the associated gas fees.
 While it is fully working it's important to note that the project remains experimental, has not undergone auditing and is not yet deemed production-ready!
 
+## Active deployment
+Currently deployed **ONLY** on **Goerli**.
+
 ## Potential use cases and limits
 Originally designed for DAI, its functionality could be extended to any token that implements a permit function.
 No, USDT does not work as it does not have any permit mechanic.
