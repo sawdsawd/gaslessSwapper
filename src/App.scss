@@ -6,7 +6,7 @@
 }
 
 .logo {
-  height: 6em;
+  height: 4em;
   padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
@@ -24,35 +24,71 @@
   filter: drop-shadow(0 0 2em #f6fb61aa);
 }
 
-.transfer_form {
-  background-color: #181818;
-  padding: 40px;
-  border-radius: 20px;
+.title {
+  font-size: 120px;
+  margin: 0 auto;
+  background: linear-gradient(90deg, #D3CCE3 0%, #F2B1FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.transfer_form h2 {
+.action_buttons {
+  max-width: 90%;
+  margin: 50px auto;
+  justify-content: space-evenly;
+}
+
+.action_button input[type="radio"]{
+  
+}
+
+.input[type="radio"]:checked{
+  
+}
+
+.action_buttons label {
+  font-weight: 600;
+}
+
+.action_button {
+  margin: 0px 20px;
+  cursor: pointer;
+  text-align: center;
+  align-items: center;
+}
+
+.form {
+  background-color: #0e0e0e;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 43px -22px #FC72FF;
+}
+
+.form h2 {
   font-size: 36px;
   margin: 0 auto;
 }
 
-.transfer_form form {
+.form form {
   display: flex;
   flex-direction: column;
 }
 
-.transfer_form label {
+.form label {
   font-size: 17px;
   margin: 10px auto;
 }
 
-.transfer_form input {
+.form input {
   padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
 }
 
-.transfer_form button {
-  background-color: yellow;
-  color: black;
-  margin-top: 30px;
+.form button {
+  background-color: #e265e4;
+  color: white;
+  margin-top: 5px;
 }
 
 .capture {
@@ -65,4 +101,9 @@
   background-color: yellow;
   color: black;
   margin-top: 10px;
+}
+
+.beware {
+  color: yellow;
+  margin: 5px auto;
 }

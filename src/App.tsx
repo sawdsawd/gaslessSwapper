@@ -32,6 +32,13 @@ function App() {
   const [amount, setAmount] = useState<string>()
   const [ethAmountOut, setEthAmountOut] = useState<string>()
   const [daiAmountInMaximum, setDaiAmountInMaximum] = useState<string>()
+  const [selectedAction, setSelectedAction] = useState<string>('swap'); // Default to swap
+
+  const handleActionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedAction(event.target.value);
+  };
+
+  
 
   const daiContract = useRef<Contract | null>(null);
   const ctfContract = useRef<Contract | null>(null);
@@ -204,66 +211,102 @@ function App() {
     const tx = await ctfContract.current?.captureTheFlag();
     await tx.wait()
   }
+
+  const renderForm = () => {
+    switch (selectedAction) {
+      case 'transfer':
+        return (
+          <>
+            <h2>Transfer DAI gaslessly</h2>
+            <form>
+              <label>
+                Enter recipient Address:
+              </label>
+              <input type="text" value={(account2)} onChange={(e) => setAccount2(e.target.value)} />
+
+              <label>
+                Enter DAI amount to transfer:
+              </label>
+              <input type="number" value={(amount)} onChange={(e) => setAmount(e.target.value)} />
+            </form>
+            <button onClick={transfer}>Transfer</button>
+          </>
+        );
+      case 'swap':
+        return (
+          <>
+            <h2>Swap DAI for ETH gaslessly</h2>
+            <form>
+              <label>
+                Recipient Address: {gaslessMiddlemanAddress}
+              </label>
+
+              <label>
+                Enter ETH amount you wish to receive:
+              </label>
+              <input type="number" value={(ethAmountOut)} onChange={(e) => setEthAmountOut(e.target.value)} />
+
+              <label>
+                Enter maximum DAI amount to swap:
+              </label>
+              <input type="number" value={(daiAmountInMaximum)} onChange={(e) => setDaiAmountInMaximum(e.target.value)} />
+              <h3 className='beware'>Beware!<br/> Rates for this swap are messed up on uniswap, 1GoerliETH = 205000 Goerli DAI</h3>
+            </form>
+            <button onClick={swap}>Swap</button>
+          </>
+        );
+      case 'capture':
+        return (
+          <>
+            <h2>Capture the flag on ctf contract</h2>
+            <form>
+              <h5>CTF Contract Address: <a href={`https://etherscan.io/address/${ctfContractAddress}`} target='_blank' rel='noopener noreferrer'>{ctfContractAddress}</a></h5>
+              <p>This is for testing purposes, it interacts with the Capture The Flag demo contract</p>
+            </form>
+            <button onClick={capture}>Capture the flag</button>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
  
   return (
     <>
-      <div>
+      <h1 className='title'>Gasless Swapper</h1>
+
+      <div className='logos_container'>
           <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=029" className="logo ETH" alt="ETH logo" />
           <img src="https://global.discourse-cdn.com/standard14/uploads/opengsn/original/1X/a946efc7d2b522a26812a5076e4da126cfdbb830.svg" className='logo GSN' alt='GSN logo' />
           <img src="https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.svg?v=029" className='logo DAI' alt='logo DAI' />
       </div>
-      <h1>Gasless Permit</h1>
 
-      <h5>Goerli DAI Contract Address: {daiContractAddress}</h5>
-      <h5>Middleman Contract Address: {gaslessMiddlemanAddress}</h5>
-      <h5>Account 2 : 0x253D9a3b25ed6b062519a1b5555A76Cd1fe2A6C8</h5>
+      {account1 && <h4>Connected account: <a href={`https://etherscan.io/address/${account1}`} target='_blank' rel='noopener noreferrer'>{account1}</a></h4>}
 
-      <div className='transfer_form'>
-        <h2>Transfer DAI gaslessly</h2>
-        <form>
-          <label>
-            Enter recipient Address:
-          </label>
-          <input type="text" value={(account2)} onChange={(e) => setAccount2(e.target.value)} />
+      <h4>Open your browser console too see all logs!</h4>
 
-          <label>
-            Enter DAI amount to transfer:
-          </label>
-          <input type="number" value={(amount)} onChange={(e) => setAmount(e.target.value)} />
+      <h5>Goerli DAI Contract Address: <a href={`https://goerli.etherscan.io/address/${daiContractAddress}`} target='_blank' rel='noopener noreferrer'>{daiContractAddress}</a></h5>
+      <h5>Swapper Middleman Contract Address: <a href={`https://goerli.etherscan.io/address/${gaslessMiddlemanAddress}`} target='_blank' rel='noopener noreferrer'>{gaslessMiddlemanAddress}</a></h5>
 
-        </form>
-        <button onClick={transfer}>Transfer</button>
+      <div className='action_buttons'>
+        <label className='action_button'>
+          <input type="radio" value="transfer" checked={selectedAction === 'transfer'} onChange={handleActionChange} />
+          Transfer
+        </label>
+
+        <label className='action_button'>
+          <input type="radio" value="swap" checked={selectedAction === 'swap'} onChange={handleActionChange}/>
+          Swap
+        </label>
+
+        <label className='action_button'>
+          <input type="radio" value="capture" checked={selectedAction === 'capture'} onChange={handleActionChange}/>
+          Capture
+        </label>
       </div>
 
-      <br/>
-      <div className='transfer_form'>
-        <h2>Swap DAI for ETH gaslessly</h2>
-        <form>
-          <label>
-            Recipient Address: {gaslessMiddlemanAddress}
-          </label>
-
-          <label>
-            Enter ETH amount you wish to receive:
-          </label>
-          <input type="number" value={(ethAmountOut)} onChange={(e) => setEthAmountOut(e.target.value)} />
-
-          <label>
-            Enter maximum DAI amount to swap:
-          </label>
-          <input type="number" value={(daiAmountInMaximum)} onChange={(e) => setDaiAmountInMaximum(e.target.value)} />
-
-        </form>
-        <button onClick={swap}>Swap</button>
-      </div>
-
-      <br/>
-      <br/>
-      <div className='capture'>
-        <h2>Capture the flag on ctf contract</h2>
-        <h5>CTF Contract Address: {ctfContractAddress}</h5>
-        <p>This is for testing purposes, it interacts with the Capture The Flag demo contract</p>
-        <button onClick={capture}>Capture the flag</button>
+      <div className='form'>
+        {renderForm()}
       </div>
     </>
   );
