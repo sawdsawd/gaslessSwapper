@@ -5,6 +5,7 @@ While it is fully working it's important to note that the project remains experi
 
 ## Active deployment
 Currently deployed **ONLY** on **Goerli**.
+Swapper contract available in *contracts* folder.
 
 ## Potential use cases and limits
 Originally designed for DAI, its functionality could be extended to any token that implements a permit function.
