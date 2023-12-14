@@ -1,4 +1,6 @@
 # Gasless DAI Token Transfer And Conversion
+<img src="./public/gaslessSwapper_logo.svg" alt="gaslessSwapper_Logo" width="200"/>
+
 This project enables you to transfer or convert your DAI tokens without having any ETH in your wallet.
 Leveraging the Gas Station Network (GSN), this solution enables gasless transactions by relying on relayers, who are compensated directly with DAI. The core of this functionality is encapsulated in the *PermitERC20UniswapPaymaster* contract, allowing relayers to collect DAI, swap it for ETH on Uniswap, and cover the associated gas fees.
 While it is fully working it's important to note that the project remains experimental, has not undergone auditing and is not yet deemed production-ready!
