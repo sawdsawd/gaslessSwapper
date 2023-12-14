@@ -280,7 +280,7 @@ function App() {
 
       <div className='logos_container'>
           <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=029" className="logo ETH" alt="ETH logo" />
-          <img src="https://global.discourse-cdn.com/standard14/uploads/opengsn/original/1X/a946efc7d2b522a26812a5076e4da126cfdbb830.svg" className='logo GSN' alt='GSN logo' />
+          <img src="./gsn_logo.svg" className='logo GSN' alt='GSN logo' />
           <img src="https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.svg?v=029" className='logo DAI' alt='logo DAI' />
       </div>
 
