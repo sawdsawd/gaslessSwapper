@@ -10,7 +10,7 @@ import ctfAbi from './assets/CtfABI.json'
 import daiAbi from './assets/DaiABI.json'
 import swapperABI from './assets/swapperABI.json'
 
-const daiContractAddress = '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844'; // Replace with the actual address of the Dai contract
+const daiContractAddress = '0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844';
 const ctfContractAddress = '0xD1cfA489F7eABf322C5EE1B3779ca6Be9Ce08a8e';
 const gaslessMiddlemanAddress = '0xeA3406bb7D2EC5A8b05A3700CF77178f95738037';
 
@@ -40,8 +40,6 @@ function App() {
     setSelectedAction(event.target.value);
   };
 
-  
-
   const daiContract = useRef<Contract | null>(null);
   const ctfContract = useRef<Contract | null>(null);
   const gaslessMiddleman = useRef<Contract | null>(null);
@@ -49,7 +47,7 @@ function App() {
   const SECOND = 1000;
   const fromAddress = account1;
   // JavaScript dates have millisecond resolution
-  const expiry = Math.trunc((Date.now() + 120 * SECOND) / SECOND);
+  const expiry = Math.trunc((Date.now() + 120 * SECOND) / SECOND); // Default to two minutes
   let nonce: number;
   const spender = gaslessMiddlemanAddress;
 

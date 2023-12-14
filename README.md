@@ -2,10 +2,19 @@
 This project enables you to transfer or convert your DAI tokens without having any ETH in your wallet.
 Leveraging the Gas Station Network (GSN), this solution enables gasless transactions by relying on relayers, who are compensated directly with DAI. The core of this functionality is encapsulated in the *PermitERC20UniswapPaymaster* contract, allowing relayers to collect DAI, swap it for ETH on Uniswap, and cover the associated gas fees.
 While it is fully working it's important to note that the project remains experimental, has not undergone auditing and is not yet deemed production-ready!
+The user interface was built using *ViteJS* (React) and *ethersjs*.
+
+[Try it now!](https://mute-dawn-0219.on.fleek.co/)
+
+## How to use
+Either use our pre-deployed [web UI](https://mute-dawn-0219.on.fleek.co/) or run the interface locally on your machine.
+Get some GoerliETH from your preferred faucet, along with Goerli DAI from Uniswap (be sure to get the [correct](https://goerli.etherscan.io/address/0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844) ones!).
+Connect your Metamask account to the application, and you're set to execute your first gasless swap!
 
 ## Active deployment
 Currently deployed **ONLY** on **Goerli**.
-Swapper contract available in *contracts* folder.
+The Swapper contract available in *contracts* folder.
+ABI of Swapper available in *assets* folder or [Goerli Etherscan](https://goerli.etherscan.io/address/0xeA3406bb7D2EC5A8b05A3700CF77178f95738037#code).
 
 ## Potential use cases and limits
 Originally designed for DAI, its functionality could be extended to any token that implements a permit function.
