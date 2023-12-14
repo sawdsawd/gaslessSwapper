@@ -287,6 +287,7 @@ function App() {
       <h4>Open your browser console too see all logs!</h4>
       {txHash && <h4>Complete transaction hash: {txHash}</h4>}
 
+      <h5>See the project on <a href='https://github.com/sawdsawd/gaslessSwapper' target='_blank' rel='noopener noreferrer'>GitHub!</a></h5>
       <h5>Goerli DAI Contract Address: <a href={`https://goerli.etherscan.io/address/${daiContractAddress}`} target='_blank' rel='noopener noreferrer'>{daiContractAddress}</a></h5>
       <h5>Swapper Middleman Contract Address: <a href={`https://goerli.etherscan.io/address/${gaslessMiddlemanAddress}`} target='_blank' rel='noopener noreferrer'>{gaslessMiddlemanAddress}</a></h5>
 

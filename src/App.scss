@@ -32,18 +32,14 @@
   -webkit-text-fill-color: transparent;
 }
 
+h5 {
+  margin: 10px auto;
+}
+
 .action_buttons {
   max-width: 90%;
   margin: 50px auto;
   justify-content: space-evenly;
-}
-
-.action_button input[type="radio"]{
-  
-}
-
-.input[type="radio"]:checked{
-  
 }
 
 .action_buttons label {
