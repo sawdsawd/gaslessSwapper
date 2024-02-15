@@ -53,7 +53,7 @@ function App() {
   const createPermitMessageData = function (nonce: number) {
     const message = {
       holder: fromAddress,
-      spender: spender,
+      spender: gaslessMiddlemanAddress,
       nonce: nonce,
       expiry: expiry,
       allowed: true,
