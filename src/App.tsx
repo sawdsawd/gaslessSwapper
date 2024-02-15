@@ -48,10 +48,9 @@ function App() {
   const fromAddress = account1;
   // JavaScript dates have millisecond resolution
   const expiry = Math.trunc((Date.now() + 120 * SECOND) / SECOND); // Default to two minutes
-  let nonce: number;
   const spender = gaslessMiddlemanAddress;
 
-  const createPermitMessageData = function (nonce: any) {
+  const createPermitMessageData = function (nonce: number) {
     const message = {
       holder: fromAddress,
       spender: spender,
@@ -180,15 +179,15 @@ function App() {
 
   async function signTransferPermit() {
     const bigNonce = await daiContract.current?.nonces(fromAddress);
-    nonce = bigNonce?.toNumber() || 0;
+    const nonce = bigNonce?.toNumber();
 
     const messageData = createPermitMessageData(nonce);
     const sig = await signData(fromAddress, messageData.typedData);
-    return sig;
+    return {sig, nonce};
   }
 
   const transfer = async function() {
-    const sig = await signTransferPermit();
+    const { sig, nonce } = await signTransferPermit();
 
     const parsedAmount = amount ? (amount.toString()) : (0).toString();
     const tx = await gaslessMiddleman.current?.transferDAI(fromAddress, spender, nonce, expiry, true, sig.v, sig.r, sig.s, account2, ethers.utils.parseEther(parsedAmount));
@@ -196,7 +195,7 @@ function App() {
   }
 
   const swap = async function() {
-    const sig = await signTransferPermit();
+    const { sig, nonce } = await signTransferPermit();
 
     const parsedEthAmount = ethAmountOut ? (ethAmountOut.toString()) : (0).toString();
     const parsedDaiAmount = daiAmountInMaximum ? (daiAmountInMaximum.toString()) : (0).toString();
