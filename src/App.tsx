@@ -153,6 +153,7 @@ function App() {
       const gsnConfig: Partial<GSNConfig> = {
         loggerConfiguration: { logLevel: 'debug' },
         paymasterAddress: PaymasterType.PermitERC20UniswapV3Paymaster,
+        performDryRunViewRelayCall: false,
       };
 
       const gsnProvider = TokenPaymasterProvider.newProvider({
@@ -285,6 +286,13 @@ function App() {
 
       <h4>Open your browser console too see all logs!</h4>
       {txHash && <h4>Complete transaction hash: {txHash}</h4>}
+
+      <div>
+          <h3>DISCLAIMER: Please Note</h3>
+          <h4>If you have never used this swapper before and your account has nonce = 0, please capture the flag first to be able to use the transfer or swap function.</h4>
+          <h4>This precaution is necessary due to a known bug that will be fixed in the future.</h4>
+      </div>
+
 
       <h5>See the project on <a href='https://github.com/sawdsawd/gaslessSwapper' target='_blank' rel='noopener noreferrer'>GitHub!</a></h5>
       <h5>Goerli DAI Contract Address: <a href={`https://goerli.etherscan.io/address/${daiContractAddress}`} target='_blank' rel='noopener noreferrer'>{daiContractAddress}</a></h5>
